@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32126.317
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TMapApp.BL", "TMapApp.BL\TMapApp.BL.csproj", "{DC71259D-005B-4B90-9C44-108D9F7B11DE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TMapApp.View", "TMapApp.View\TMapApp.View.csproj", "{BF16B320-8F71-461E-8CF3-35DD584B9BFC}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DC71259D-005B-4B90-9C44-108D9F7B11DE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DC71259D-005B-4B90-9C44-108D9F7B11DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DC71259D-005B-4B90-9C44-108D9F7B11DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DC71259D-005B-4B90-9C44-108D9F7B11DE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BF16B320-8F71-461E-8CF3-35DD584B9BFC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BF16B320-8F71-461E-8CF3-35DD584B9BFC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BF16B320-8F71-461E-8CF3-35DD584B9BFC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BF16B320-8F71-461E-8CF3-35DD584B9BFC}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {DC5B117A-A614-47AD-BEBD-7D47D4647047}
+	EndGlobalSection
+EndGlobal
