@@ -18,7 +18,9 @@ namespace TMapApp.View
 {
     public partial class MapWindow : MaterialForm
     {
-        #region Parametrs
+        #region Параметры
+        private bool isLeftMouseDown;
+        private GMapMarker selectedPoint;
         private readonly MaterialSkinManager materialSkinManager;
         private readonly List<GMapProvider> listProviders = new List<GMapProvider>()
         {
@@ -31,12 +33,14 @@ namespace TMapApp.View
 
         public MapWindow()
         {
+            #region Инициализация
             InitializeComponent();
             materialSkinManager = MaterialSkinManager.Instance;
             materialSkinManager.EnforceBackcolorOnAllComponents = true;
             materialSkinManager.AddFormToManage(this);
             materialSkinManager.Theme = MaterialSkinManager.Themes.LIGHT;
             materialSkinManager.ColorScheme = new ColorScheme(Primary.Green400, Primary.Green700, Primary.Green100, Accent.Blue200, TextShade.WHITE);
+            #endregion
         }
 
         private void RemoveButton_Click(object sender, EventArgs e)
@@ -53,10 +57,10 @@ namespace TMapApp.View
             Map.DragButton = MouseButtons.Middle;
             Map.ShowCenter = false;
 
-            PointLatLng point = new PointLatLng(lat,lng);
+            var point = new PointLatLng(lat,lng);
             GMapMarker marker = new GMarkerGoogle(point,GMarkerGoogleType.black_small);
 
-            GMapOverlay markers = new GMapOverlay("markers");
+            var markers = new GMapOverlay("markers");
             markers.Markers.Add(marker);
             Map.Overlays.Add(markers);
         }
@@ -73,7 +77,35 @@ namespace TMapApp.View
 
         private void Map_OnMarkerClick(GMapMarker item, MouseEventArgs e)
         {
+            if(e.Button == MouseButtons.Left)
+            {
+                selectedPoint = item;
+            }
+        }
 
+        private void Map_MouseDown(object sender, MouseEventArgs e)
+        {
+            if(e.Button == MouseButtons.Left)
+            {
+                isLeftMouseDown = true;
+            }
+        }
+
+        private void Map_MouseUp(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                isLeftMouseDown = false;
+            }
+        }
+
+        private void Map_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left && isLeftMouseDown)
+            {
+                if(selectedPoint != null)
+                    selectedPoint.Position = Map.FromLocalToLatLng(e.X, e.Y);
+            }
         }
     }
 }

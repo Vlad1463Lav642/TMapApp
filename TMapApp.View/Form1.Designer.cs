@@ -107,6 +107,9 @@
             this.Map.Zoom = 0D;
             this.Map.OnMarkerClick += new GMap.NET.WindowsForms.MarkerClick(this.Map_OnMarkerClick);
             this.Map.Load += new System.EventHandler(this.Map_Load);
+            this.Map.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Map_MouseDown);
+            this.Map.MouseMove += new System.Windows.Forms.MouseEventHandler(this.Map_MouseMove);
+            this.Map.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Map_MouseUp);
             // 
             // ListOfMapProviders
             // 
@@ -118,7 +121,7 @@
             this.ListOfMapProviders.DropDownHeight = 174;
             this.ListOfMapProviders.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.ListOfMapProviders.DropDownWidth = 121;
-            this.ListOfMapProviders.Font = new System.Drawing.Font("Roboto Medium", 14F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Pixel);
+            this.ListOfMapProviders.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Pixel);
             this.ListOfMapProviders.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(222)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.ListOfMapProviders.FormattingEnabled = true;
             this.ListOfMapProviders.IntegralHeight = false;
