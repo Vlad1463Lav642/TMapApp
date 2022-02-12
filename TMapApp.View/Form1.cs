@@ -19,13 +19,8 @@ namespace TMapApp.View
         private GMapMarker selectedPoint;
         private readonly MaterialSkinManager materialSkinManager;
         private readonly IDatabase database;
-        private readonly List<GMapProvider> listProviders = new List<GMapProvider>()
-        {
-            GMapProviders.GoogleMap,
-            GMapProviders.YandexMap,
-            GMapProviders.BingMap,
-            GMapProviders.OpenStreetMap
-        };
+        private readonly List<GMapMarker> points;
+        private readonly List<GMapProvider> listProviders;
         #endregion
 
         public MapWindow()
@@ -39,14 +34,22 @@ namespace TMapApp.View
             materialSkinManager.ColorScheme = new ColorScheme(Primary.Green400, Primary.Green700, Primary.Green100, Accent.Blue200, TextShade.WHITE);
 
             database = new Database();
+
+            listProviders = new List<GMapProvider>()
+            {
+                GMapProviders.GoogleMap,
+                GMapProviders.YandexMap,
+                GMapProviders.BingMap,
+                GMapProviders.OpenStreetMap
+            };
+
+            points = new List<GMapMarker>();
             #endregion
         }
 
-        private void RemoveButton_Click(object sender, EventArgs e)
-        {
-
-        }
-
+        /// <summary>
+        /// Инициализация маркеров.
+        /// </summary>
         private void MarkersInit()
         {
             var pointsList = database.GetPointsInfo();
@@ -54,9 +57,14 @@ namespace TMapApp.View
 
             foreach (var item in pointsList)
             {
-                string[] latLng = item.Value.Split(':');
+                var latLng = item.Value.Split(':');
                 var point = new PointLatLng(Convert.ToDouble(latLng[0]),Convert.ToDouble(latLng[1]));
-                GMapMarker marker = new GMarkerGoogle(point, GMarkerGoogleType.black_small);
+                GMapMarker marker = new GMarkerGoogle(point, GMarkerGoogleType.black_small)
+                {
+                    ToolTipText = item.Key
+                };
+
+                points.Add(marker);
 
                 markers.Markers.Add(marker);
             }
@@ -64,6 +72,11 @@ namespace TMapApp.View
             Map.Overlays.Add(markers);
         }
 
+        /// <summary>
+        /// Карта.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Map_Load(object sender, EventArgs e)
         {
             #region Настройки карты
@@ -82,18 +95,18 @@ namespace TMapApp.View
             Map.DragButton = MouseButtons.Middle;
             Map.ShowCenter = false;
 
-            Map.MinZoom = 10;
+            Map.MinZoom = 5;
             Map.MaxZoom = 100;
             #endregion
 
             MarkersInit();
         }
 
-        private void AddButton_Click(object sender, EventArgs e)
-        {
-
-        }
-
+        /// <summary>
+        /// Выпадающий список с поставщиками карт.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ListOfMapProviders_SelectedValueChanged(object sender, EventArgs e)
         {
             Map.MapProvider = listProviders[ListOfMapProviders.SelectedIndex];
@@ -112,6 +125,8 @@ namespace TMapApp.View
             if (e.Button == MouseButtons.Left)
             {
                 isLeftMouseDown = false;
+                var pointID = points.IndexOf(selectedPoint);
+                database.SetPointCoordinate($"{selectedPoint.Position.Lat}:{selectedPoint.Position.Lng}",pointID);
                 selectedPoint = null;
             }
         }

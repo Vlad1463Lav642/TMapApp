@@ -54,7 +54,6 @@
             this.RemoveButton.Type = MaterialSkin.Controls.MaterialButton.MaterialButtonType.Contained;
             this.RemoveButton.UseAccentColor = false;
             this.RemoveButton.UseVisualStyleBackColor = true;
-            this.RemoveButton.Click += new System.EventHandler(this.RemoveButton_Click);
             // 
             // AddButton
             // 
@@ -76,7 +75,6 @@
             this.AddButton.Type = MaterialSkin.Controls.MaterialButton.MaterialButtonType.Contained;
             this.AddButton.UseAccentColor = false;
             this.AddButton.UseVisualStyleBackColor = true;
-            this.AddButton.Click += new System.EventHandler(this.AddButton_Click);
             // 
             // Map
             // 
