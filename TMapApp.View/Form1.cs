@@ -21,6 +21,8 @@ namespace TMapApp.View
         private readonly IDatabase database;
         private readonly List<GMapMarker> points;
         private readonly List<GMapProvider> listProviders;
+        private readonly double mapLat = 55.12543197566676;
+        private readonly double mapLng = 82.64313042320175;
         #endregion
 
         public MapWindow()
@@ -38,7 +40,7 @@ namespace TMapApp.View
             listProviders = new List<GMapProvider>()
             {
                 GMapProviders.GoogleMap,
-                GMapProviders.YandexMap,
+                GMapProviders.GoogleHybridMap,
                 GMapProviders.BingMap,
                 GMapProviders.OpenStreetMap
             };
@@ -84,19 +86,17 @@ namespace TMapApp.View
             Map.CanDragMap = true;
             Map.MarkersEnabled = true;
             Map.Bearing = 0;
-            Map.GrayScaleMode = true;
-            Map.Dock = DockStyle.None;
 
             Map.MouseWheelZoomType = MouseWheelZoomType.MousePositionWithoutCenter;
             Map.IgnoreMarkerOnMouseWheel = true;
-            GMaps.Instance.Mode = AccessMode.ServerAndCache;
+            GMaps.Instance.Mode = AccessMode.ServerOnly;
 
-            Map.Position = new PointLatLng(10, 10);
+            Map.Position = new PointLatLng(mapLat, mapLng);
             Map.DragButton = MouseButtons.Middle;
             Map.ShowCenter = false;
 
-            Map.MinZoom = 5;
-            Map.MaxZoom = 100;
+            Map.MaxZoom = 20;
+            Map.Zoom = 5;
             #endregion
 
             MarkersInit();
@@ -125,9 +125,12 @@ namespace TMapApp.View
             if (e.Button == MouseButtons.Left)
             {
                 isLeftMouseDown = false;
-                var pointID = points.IndexOf(selectedPoint);
-                database.SetPointCoordinate($"{selectedPoint.Position.Lat}:{selectedPoint.Position.Lng}",pointID);
-                selectedPoint = null;
+                if (selectedPoint != null)
+                {
+                    var pointID = points.IndexOf(selectedPoint);
+                    database.SetPointCoordinate($"{selectedPoint.Position.Lat}:{selectedPoint.Position.Lng}", pointID);
+                    selectedPoint = null;
+                }
             }
         }
 
