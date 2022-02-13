@@ -54,24 +54,31 @@ namespace TMapApp.View
         /// </summary>
         private void MarkersInit()
         {
-            var pointsList = database.GetPointsInfo();
-            var markers = new GMapOverlay("markers");
-
-            foreach (var item in pointsList)
+            try
             {
-                var latLng = item.Value.Split(':');
-                var point = new PointLatLng(Convert.ToDouble(latLng[0]),Convert.ToDouble(latLng[1]));
-                GMapMarker marker = new GMarkerGoogle(point, GMarkerGoogleType.black_small)
+                var pointsList = database.GetPointsInfo();
+                var markers = new GMapOverlay("markers");
+
+                foreach (var item in pointsList)
                 {
-                    ToolTipText = item.Key
-                };
+                    var latLng = item.Value.Split(':');
+                    var point = new PointLatLng(Convert.ToDouble(latLng[0]), Convert.ToDouble(latLng[1]));
+                    GMapMarker marker = new GMarkerGoogle(point, GMarkerGoogleType.black_small)
+                    {
+                        ToolTipText = item.Key
+                    };
 
-                points.Add(marker);
+                    points.Add(marker);
 
-                markers.Markers.Add(marker);
+                    markers.Markers.Add(marker);
+                }
+
+                Map.Overlays.Add(markers);
             }
-
-            Map.Overlays.Add(markers);
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Ошибка!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         /// <summary>
@@ -81,25 +88,32 @@ namespace TMapApp.View
         /// <param name="e"></param>
         private void Map_Load(object sender, EventArgs e)
         {
-            #region Настройки карты
-            Map.MapProvider = listProviders[ListOfMapProviders.SelectedIndex];
-            Map.CanDragMap = true;
-            Map.MarkersEnabled = true;
-            Map.Bearing = 0;
+            try
+            {
+                #region Настройки карты
+                Map.MapProvider = listProviders[ListOfMapProviders.SelectedIndex];
+                Map.CanDragMap = true;
+                Map.MarkersEnabled = true;
+                Map.Bearing = 0;
 
-            Map.MouseWheelZoomType = MouseWheelZoomType.MousePositionWithoutCenter;
-            Map.IgnoreMarkerOnMouseWheel = true;
-            GMaps.Instance.Mode = AccessMode.ServerOnly;
+                Map.MouseWheelZoomType = MouseWheelZoomType.MousePositionWithoutCenter;
+                Map.IgnoreMarkerOnMouseWheel = true;
+                GMaps.Instance.Mode = AccessMode.ServerOnly;
 
-            Map.Position = new PointLatLng(mapLat, mapLng);
-            Map.DragButton = MouseButtons.Middle;
-            Map.ShowCenter = false;
+                Map.Position = new PointLatLng(mapLat, mapLng);
+                Map.DragButton = MouseButtons.Middle;
+                Map.ShowCenter = false;
 
-            Map.MaxZoom = 20;
-            Map.Zoom = 5;
-            #endregion
+                Map.MaxZoom = 20;
+                Map.Zoom = 5;
+                #endregion
 
-            MarkersInit();
+                MarkersInit();
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Ошибка!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         /// <summary>
@@ -122,15 +136,22 @@ namespace TMapApp.View
 
         private void Map_MouseUp(object sender, MouseEventArgs e)
         {
-            if (e.Button == MouseButtons.Left)
+            try
             {
-                isLeftMouseDown = false;
-                if (selectedPoint != null)
+                if (e.Button == MouseButtons.Left)
                 {
-                    var pointID = points.IndexOf(selectedPoint);
-                    database.SetPointCoordinate($"{selectedPoint.Position.Lat}:{selectedPoint.Position.Lng}", pointID);
-                    selectedPoint = null;
+                    isLeftMouseDown = false;
+                    if (selectedPoint != null)
+                    {
+                        var pointID = points.IndexOf(selectedPoint);
+                        database.SetPointCoordinate($"{selectedPoint.Position.Lat}:{selectedPoint.Position.Lng}", pointID);
+                        selectedPoint = null;
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Ошибка!", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -146,6 +167,12 @@ namespace TMapApp.View
         private void Map_OnMarkerEnter(GMapMarker item)
         {
             selectedPoint = item;
+        }
+
+        private void DatabaseButton_Click(object sender, EventArgs e)
+        {
+            DatabaseWindow databaseWindow = new DatabaseWindow();
+            databaseWindow.Show();
         }
     }
 }

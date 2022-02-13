@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Data;
 
 namespace TMapApp.BL.Controller
 {
@@ -34,5 +35,18 @@ namespace TMapApp.BL.Controller
         /// <param name="coordinate">Новые координаты.</param>
         /// <param name="id">ID точки.</param>
         void SetPointCoordinate(string coordinate, int id);
+
+        /// <summary>
+        /// Получить таблицу из базы данных.
+        /// </summary>
+        /// <param name="table">Таблица БД.</param>
+        /// <returns>DataTable</returns>
+        DataTable GetTable(string table);
+
+        /// <summary>
+        /// Обновить таблицу в БД.
+        /// </summary>
+        /// <param name="dataTable">Таблица БД.</param>
+        void UpdateTable(DataTable dataTable);
     }
 }

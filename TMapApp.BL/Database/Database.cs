@@ -17,6 +17,7 @@ namespace TMapApp.BL.Database
         private List<string> coordinatesList;
         private readonly List<string> machinesList;
         private List<KeyValuePair<int, int>> pointsIDs;
+        private SqlDataAdapter dataAdapter;
         #endregion
 
         public Database()
@@ -155,11 +156,7 @@ namespace TMapApp.BL.Database
                 var command = new SqlCommand($"INSERT INTO Coordinates VALUES('{coordinate}');", connection);
                 command.ExecuteNonQuery();
 
-                CloseConnection();
-
                 coordinatesList = SqlQuery("Coordinate", "Coordinates", "Coordinate_ID");
-
-                OpenConnection();
 
                 var command2 = new SqlCommand($"UPDATE MapPoints SET Coordinate_ID = {coordinatesList.Count} WHERE MapPoint_ID = {++id}", connection);
                 command2.ExecuteNonQuery();
@@ -168,6 +165,41 @@ namespace TMapApp.BL.Database
             }
 
             pointsIDs = SqlQuery("MapPoints", "MapPoint_ID");
+        }
+
+        /// <summary>
+        /// Получить таблицу из базы данных.
+        /// </summary>
+        /// <param name="table">Таблица БД.</param>
+        /// <returns>DataTable</returns>
+        public DataTable GetTable(string table)
+        {
+            OpenConnection();
+
+            dataAdapter = new SqlDataAdapter($"SELECT *, 'Delete' AS [Command] FROM {table}",connection);
+
+            var sqlBuilder = new SqlCommandBuilder(dataAdapter);
+
+            sqlBuilder.GetInsertCommand();
+            sqlBuilder.GetUpdateCommand();
+            sqlBuilder.GetDeleteCommand();
+
+            var dataTable = new DataTable();
+
+            dataAdapter.Fill(dataTable);
+
+            CloseConnection();
+
+            return dataTable;
+        }
+
+        /// <summary>
+        /// Обновить таблицу в БД.
+        /// </summary>
+        /// <param name="dataTable">Таблица БД.</param>
+        public void UpdateTable(DataTable dataTable)
+        {
+            dataAdapter.Update(dataTable);
         }
 
         /// <summary>

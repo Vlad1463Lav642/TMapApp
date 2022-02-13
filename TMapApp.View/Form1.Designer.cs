@@ -30,6 +30,7 @@
         {
             this.Map = new GMap.NET.WindowsForms.GMapControl();
             this.ListOfMapProviders = new MaterialSkin.Controls.MaterialComboBox();
+            this.DatabaseButton = new MaterialSkin.Controls.MaterialButton();
             this.SuspendLayout();
             // 
             // Map
@@ -67,7 +68,9 @@
             // 
             // ListOfMapProviders
             // 
-            this.ListOfMapProviders.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.ListOfMapProviders.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.ListOfMapProviders.AutoResize = false;
             this.ListOfMapProviders.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
             this.ListOfMapProviders.Depth = 0;
@@ -94,15 +97,40 @@
             this.ListOfMapProviders.TabIndex = 3;
             this.ListOfMapProviders.SelectedValueChanged += new System.EventHandler(this.ListOfMapProviders_SelectedValueChanged);
             // 
+            // DatabaseButton
+            // 
+            this.DatabaseButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.DatabaseButton.AutoSize = false;
+            this.DatabaseButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.DatabaseButton.Density = MaterialSkin.Controls.MaterialButton.MaterialButtonDensity.Default;
+            this.DatabaseButton.Depth = 0;
+            this.DatabaseButton.HighEmphasis = true;
+            this.DatabaseButton.Icon = null;
+            this.DatabaseButton.Location = new System.Drawing.Point(635, 128);
+            this.DatabaseButton.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
+            this.DatabaseButton.MouseState = MaterialSkin.MouseState.HOVER;
+            this.DatabaseButton.Name = "DatabaseButton";
+            this.DatabaseButton.NoAccentTextColor = System.Drawing.Color.Empty;
+            this.DatabaseButton.Size = new System.Drawing.Size(158, 36);
+            this.DatabaseButton.TabIndex = 4;
+            this.DatabaseButton.Text = "База данных";
+            this.DatabaseButton.Type = MaterialSkin.Controls.MaterialButton.MaterialButtonType.Contained;
+            this.DatabaseButton.UseAccentColor = false;
+            this.DatabaseButton.UseVisualStyleBackColor = true;
+            this.DatabaseButton.Click += new System.EventHandler(this.DatabaseButton_Click);
+            // 
             // MapWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.DatabaseButton);
             this.Controls.Add(this.ListOfMapProviders);
             this.Controls.Add(this.Map);
             this.MaximizeBox = false;
             this.Name = "MapWindow";
+            this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Карта";
             this.ResumeLayout(false);
@@ -112,6 +140,7 @@
         #endregion
         private GMap.NET.WindowsForms.GMapControl Map;
         private MaterialSkin.Controls.MaterialComboBox ListOfMapProviders;
+        private MaterialSkin.Controls.MaterialButton DatabaseButton;
     }
 }
 
