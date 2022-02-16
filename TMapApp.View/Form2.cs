@@ -15,6 +15,7 @@ namespace TMapApp.View
         private readonly IDatabase database;
         private string selectedDataTable;
         private bool isRowAdded;
+        private bool isValueUpdated;
         #endregion
         public DatabaseWindow()
         {
@@ -102,8 +103,6 @@ namespace TMapApp.View
                                 }
 
                                 dataTable.Rows.Add(row);
-                                dataTable.Rows.RemoveAt(dataTable.Rows.Count - 1);
-                                DatabaseView.Rows.RemoveAt(DatabaseView.Rows.Count - 2);
                                 DatabaseView.Rows[rowIndex].Cells[columnCounter].Value = "Delete";
 
                                 isRowAdded = false;
@@ -111,6 +110,9 @@ namespace TMapApp.View
                             break;
 
                         case "Update":
+
+                            rowIndex = e.RowIndex;
+
                             if (MessageBox.Show("Вы действительно хотите изменить данные?", "Изменение", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                             {
                                 for (int i = 0; i < DatabaseView.Columns.Count; i++)
@@ -119,6 +121,7 @@ namespace TMapApp.View
 
                                     dataTable.Rows[rowIndex][columnName] = DatabaseView.Rows[rowIndex].Cells[DatabaseView.Columns[i].Name].Value;
                                 }
+                                isValueUpdated = false;
                             }
                             break;
                     }
@@ -158,15 +161,16 @@ namespace TMapApp.View
         {
             try
             {
-                if (!isRowAdded)
+                if (!isValueUpdated && !isRowAdded)
                 {
+                    isValueUpdated = true;
                     var rowIndex = DatabaseView.SelectedCells[0].RowIndex;
                     var editedRow = DatabaseView.Rows[rowIndex];
                     var linkCell = new DataGridViewLinkCell();
                     var columnCounter = DatabaseView.Columns.Count - 1;
 
                     DatabaseView[columnCounter, rowIndex] = linkCell;
-                    editedRow.Cells["Command"].Value = "Insert";
+                    editedRow.Cells["Command"].Value = "Update";
                     
                 }
             }

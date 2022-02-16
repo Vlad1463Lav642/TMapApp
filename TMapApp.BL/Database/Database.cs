@@ -156,7 +156,11 @@ namespace TMapApp.BL.Database
                 var command = new SqlCommand($"INSERT INTO Coordinates VALUES('{coordinate}');", connection);
                 command.ExecuteNonQuery();
 
+                CloseConnection();
+
                 coordinatesList = SqlQuery("Coordinate", "Coordinates", "Coordinate_ID");
+
+                OpenConnection();
 
                 var command2 = new SqlCommand($"UPDATE MapPoints SET Coordinate_ID = {coordinatesList.Count} WHERE MapPoint_ID = {++id}", connection);
                 command2.ExecuteNonQuery();
