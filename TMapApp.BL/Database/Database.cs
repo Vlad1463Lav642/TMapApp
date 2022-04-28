@@ -20,7 +20,7 @@ namespace TMapApp.BL.Database
         private readonly List<string> machinesList;
         private List<KeyValuePair<int, int>> pointsIDs;
         private SqlDataAdapter dataAdapter;
-        private string logFolderPath = $"{Directory.GetParent(Environment.CurrentDirectory).Parent.Parent.FullName}/Logs";
+        private string logFolderPath = "Logs";
         #endregion
 
         public Database()

@@ -69,8 +69,7 @@
             this.DatabaseComboBox.Items.AddRange(new object[] {
             "Machines",
             "Coordinates",
-            "MapPoints",
-            "TestttT"});
+            "MapPoints"});
             this.DatabaseComboBox.Location = new System.Drawing.Point(6, 70);
             this.DatabaseComboBox.MaxDropDownItems = 4;
             this.DatabaseComboBox.MouseState = MaterialSkin.MouseState.OUT;

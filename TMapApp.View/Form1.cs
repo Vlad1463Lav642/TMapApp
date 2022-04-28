@@ -21,8 +21,8 @@ namespace TMapApp.View
         private readonly IDatabase database;
         private readonly List<GMapMarker> points;
         private readonly List<GMapProvider> listProviders;
-        private readonly double mapLat = 55.12543197566676;
-        private readonly double mapLng = 82.64313042320175;
+        private readonly double mapLat = Convert.ToDouble("55,12543197566676");
+        private readonly double mapLng = Convert.ToDouble("82,64313042320175");
         #endregion
 
         public MapWindow()
