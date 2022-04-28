@@ -1,7 +1,6 @@
 ﻿using MaterialSkin;
 using MaterialSkin.Controls;
 using System;
-using System.Data;
 using System.Windows.Forms;
 using TMapApp.BL.Controller;
 using TMapApp.BL.Database;
@@ -47,6 +46,9 @@ namespace TMapApp.View
                     var linkCell = new DataGridViewLinkCell();
                     DatabaseView[columnCounter, i] = linkCell;
                 }
+
+                if (database.ExceptionText != null)
+                    throw new Exception(database.ExceptionText.Message);
             }
             catch (Exception ex)
             {
@@ -127,6 +129,9 @@ namespace TMapApp.View
                     }
                     database.UpdateTable(dataTable);
                 }
+
+                if (database.ExceptionText != null)
+                    throw new Exception(database.ExceptionText.Message);
             }
             catch(Exception ex)
             {
@@ -148,8 +153,10 @@ namespace TMapApp.View
                     var linkCell = new DataGridViewLinkCell();
                     DatabaseView[columnCounter, rowCounter] = linkCell;
                     row.Cells["Command"].Value = "Insert";
-
                 }
+
+                if (database.ExceptionText != null)
+                    throw new Exception(database.ExceptionText.Message);
             }
             catch (Exception ex)
             {
@@ -171,8 +178,10 @@ namespace TMapApp.View
 
                     DatabaseView[columnCounter, rowIndex] = linkCell;
                     editedRow.Cells["Command"].Value = "Update";
-                    
                 }
+
+                if (database.ExceptionText != null)
+                    throw new Exception(database.ExceptionText.Message);
             }
             catch(Exception ex)
             {

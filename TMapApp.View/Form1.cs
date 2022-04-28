@@ -74,6 +74,9 @@ namespace TMapApp.View
                 }
 
                 Map.Overlays.Add(markers);
+
+                if (database.ExceptionText != null)
+                    throw new Exception(database.ExceptionText.Message);
             }
             catch (Exception ex)
             {
@@ -109,6 +112,9 @@ namespace TMapApp.View
                 #endregion
 
                 MarkersInit();
+
+                if (database.ExceptionText != null)
+                    throw new Exception(database.ExceptionText.Message);
             }
             catch(Exception ex)
             {
@@ -129,9 +135,7 @@ namespace TMapApp.View
         private void Map_MouseDown(object sender, MouseEventArgs e)
         {
             if(e.Button == MouseButtons.Left)
-            {
                 isLeftMouseDown = true;
-            }
         }
 
         private void Map_MouseUp(object sender, MouseEventArgs e)
@@ -148,6 +152,9 @@ namespace TMapApp.View
                         selectedPoint = null;
                     }
                 }
+
+                if (database.ExceptionText != null)
+                    throw new Exception(database.ExceptionText.Message);
             }
             catch (Exception ex)
             {

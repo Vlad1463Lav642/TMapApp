@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data;
 
 namespace TMapApp.BL.Controller
@@ -16,6 +17,11 @@ namespace TMapApp.BL.Controller
         /// </summary>
         /// <returns>Список с строками.</returns>
         List<string> GetCoordinatesList();
+
+        /// <summary>
+        /// Текст последней ошибки.
+        /// </summary>
+        Exception ExceptionText { get; }
 
         /// <summary>
         /// Получить список техники.
