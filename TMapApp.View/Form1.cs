@@ -56,16 +56,16 @@ namespace TMapApp.View
         {
             try
             {
-                var pointsList = database.GetPointsInfo();
+                var pointsList = database.GetPoints();
                 var markers = new GMapOverlay("markers");
 
                 foreach (var item in pointsList)
                 {
-                    var latLng = item.Value.Split(':');
+                    var latLng = item.Coordinate.Split(':');
                     var point = new PointLatLng(Convert.ToDouble(latLng[0]), Convert.ToDouble(latLng[1]));
                     GMapMarker marker = new GMarkerGoogle(point, GMarkerGoogleType.black_small)
                     {
-                        ToolTipText = item.Key
+                        ToolTipText = item.MachineName
                     };
 
                     points.Add(marker);
@@ -148,7 +148,7 @@ namespace TMapApp.View
                     if (selectedPoint != null)
                     {
                         var pointID = points.IndexOf(selectedPoint);
-                        database.SetPointCoordinate($"{selectedPoint.Position.Lat}:{selectedPoint.Position.Lng}", pointID);
+                        database.SetPoint($"{selectedPoint.Position.Lat}:{selectedPoint.Position.Lng}", pointID);
                         selectedPoint = null;
                     }
                 }

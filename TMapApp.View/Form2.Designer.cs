@@ -67,8 +67,6 @@
             this.DatabaseComboBox.IntegralHeight = false;
             this.DatabaseComboBox.ItemHeight = 43;
             this.DatabaseComboBox.Items.AddRange(new object[] {
-            "Machines",
-            "Coordinates",
             "MapPoints"});
             this.DatabaseComboBox.Location = new System.Drawing.Point(6, 70);
             this.DatabaseComboBox.MaxDropDownItems = 4;

@@ -58,7 +58,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controller\IDatabase.cs" />
+    <Compile Include="Controller\IPoint.cs" />
     <Compile Include="Database\Database.cs" />
+    <Compile Include="Database\Point.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
