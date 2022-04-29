@@ -4,6 +4,8 @@ using System.Configuration;
 using System.Data.SqlClient;
 using TMapApp.BL.Controller;
 using System;
+using System.IO;
+using System.Text;
 
 namespace TMapApp.BL.Database
 {
@@ -14,45 +16,26 @@ namespace TMapApp.BL.Database
     {
         #region Параметры
         private readonly SqlConnection connection;
-        private List<string> coordinatesList;
-        private readonly List<string> machinesList;
-        private List<KeyValuePair<int, int>> pointsIDs;
         private SqlDataAdapter dataAdapter;
+        private string logFolderPath = "Logs";
+        private List<Point> points;
         #endregion
 
         public Database()
         {
             connection = new SqlConnection(ConfigurationManager.ConnectionStrings["Default"].ConnectionString);
-            coordinatesList = SqlQuery("Coordinate", "Coordinates", "Coordinate_ID");
-            machinesList = SqlQuery("Machine_Name", "Machines", "Machine_ID");
-            pointsIDs = SqlQuery("MapPoints", "MapPoint_ID");
+            points = SqlQuery("MapPoints", "MapPoint_ID");
+
+            Directory.CreateDirectory(logFolderPath);
         }
 
         /// <summary>
-        /// Осуществить запрос к таблице БД.
+        /// Текст последней ошибки.
         /// </summary>
-        /// <param name="column">Столбец таблицы у которого нужно получить данные.</param>
-        /// <param name="table">Таблица БД.</param>
-        /// <param name="orderBy">Столбец таблицы по которому будет осуществлятся сортировка.</param>
-        /// <returns></returns>
-        private List<string> SqlQuery(string column, string table, string orderBy)
+        public Exception ExceptionText
         {
-            var list = new List<string>();
-
-            OpenConnection();
-
-            var command = new SqlCommand($"SELECT {column} FROM {table} ORDER BY {orderBy} ASC",connection);
-            var result = command.ExecuteReader();
-
-            while (result.Read())
-            {
-                list.Add(result.GetString(0));
-            }
-
-            CloseConnection();
-
-
-            return list;
+            get;
+            private set;
         }
 
         /// <summary>
@@ -61,21 +44,28 @@ namespace TMapApp.BL.Database
         /// <param name="table">Таблица БД.</param>
         /// <param name="orderBy">Столбец таблицы по которому будет осуществлятся сортировка.</param>
         /// <returns></returns>
-        private List<KeyValuePair<int,int>> SqlQuery(string table, string orderBy)
+        private List<Point> SqlQuery(string table, string orderBy)
         {
-            var list = new List<KeyValuePair<int, int>>();
+            var list = new List<Point>();
 
-            OpenConnection();
+            ExceptionText = null;
 
-            var command = new SqlCommand($"SELECT * FROM {table} ORDER BY {orderBy} ASC", connection);
-            var result = command.ExecuteReader();
-
-            while (result.Read())
+            try
             {
-                list.Add(new KeyValuePair<int, int>(result.GetInt32(1), result.GetInt32(2)));
-            }
+                OpenConnection();
 
-            CloseConnection();
+                var command = new SqlCommand($"SELECT * FROM {table} ORDER BY {orderBy} ASC", connection);
+                var result = command.ExecuteReader();
+
+                while (result.Read())
+                    list.Add(new Point(result.GetInt32(0), result.GetString(1), result.GetString(2)));
+
+                CloseConnection();
+            }
+            catch (SqlException ex)
+            {
+                CreateLogException(ex);
+            }
 
             return list;
         }
@@ -85,9 +75,16 @@ namespace TMapApp.BL.Database
         /// </summary>
         private void OpenConnection()
         {
-            if(connection.State != ConnectionState.Open)
+            ExceptionText = null;
+
+            try
             {
-                connection.Open();
+                if (connection.State != ConnectionState.Open)
+                    connection.Open();
+            }
+            catch(Exception ex)
+            {
+                CreateLogException(ex);
             }
         }
 
@@ -96,38 +93,26 @@ namespace TMapApp.BL.Database
         /// </summary>
         private void CloseConnection()
         {
-            if (connection.State != ConnectionState.Closed)
+            ExceptionText = null;
+
+            try
             {
-                connection.Close();
+                if (connection.State != ConnectionState.Closed)
+                    connection.Close();
+            }
+            catch(Exception ex)
+            {
+                CreateLogException(ex);
             }
         }
 
         /// <summary>
         /// Получить список с данными о точках.
         /// </summary>
-        /// <returns>Список с KeyValuePair<string,string></returns>
-        public List<KeyValuePair<string, string>> GetPointsInfo()
+        /// <returns>List<Point></returns>
+        public List<Point> GetPoints()
         {
-            var points = new List<KeyValuePair<string, string>>();
-
-            foreach(var item in pointsIDs)
-            {
-                var result1 = item.Key;
-                var result2 = item.Value;
-
-                points.Add(new KeyValuePair<string, string>(machinesList[--result1], coordinatesList[--result2]));
-            }
-
             return points;
-        }
-
-        /// <summary>
-        /// Получить список координат.
-        /// </summary>
-        /// <returns>Список с строками.</returns>
-        public List<string> GetCoordinatesList()
-        {
-            return coordinatesList;
         }
 
         /// <summary>
@@ -135,40 +120,25 @@ namespace TMapApp.BL.Database
         /// </summary>
         /// <param name="coordinate">Новые координаты.</param>
         /// <param name="id">ID точки.</param>
-        public void SetPointCoordinate(string coordinate, int id)
+        public void SetPoint(string coordinate, int id)
         {
-            if (coordinatesList.Contains(coordinate))
-            {
-                var coordinateID = coordinatesList.IndexOf(coordinate);
+            ExceptionText = null;
 
+            try
+            {
                 OpenConnection();
 
-                var command = new SqlCommand($"UPDATE MapPoints SET Coordinate_ID = {++coordinateID} WHERE MapPoint_ID = {++id}", connection);
-                command.ExecuteNonQuery();
-
-                CloseConnection();
-            }
-            else
-            {
-                Console.WriteLine(coordinate);
-                OpenConnection();
-
-                var command = new SqlCommand($"INSERT INTO Coordinates VALUES('{coordinate}');", connection);
+                var command = new SqlCommand($"UPDATE MapPoints SET Coordinate = ('{coordinate}') WHERE MapPoint_ID = {++id}", connection);
                 command.ExecuteNonQuery();
 
                 CloseConnection();
 
-                coordinatesList = SqlQuery("Coordinate", "Coordinates", "Coordinate_ID");
-
-                OpenConnection();
-
-                var command2 = new SqlCommand($"UPDATE MapPoints SET Coordinate_ID = {coordinatesList.Count} WHERE MapPoint_ID = {++id}", connection);
-                command2.ExecuteNonQuery();
-
-                CloseConnection();
+                points = SqlQuery("MapPoints", "MapPoint_ID");
             }
-
-            pointsIDs = SqlQuery("MapPoints", "MapPoint_ID");
+            catch (SqlException ex)
+            {
+                CreateLogException(ex);
+            }
         }
 
         /// <summary>
@@ -178,21 +148,30 @@ namespace TMapApp.BL.Database
         /// <returns>DataTable</returns>
         public DataTable GetTable(string table)
         {
-            OpenConnection();
-
-            dataAdapter = new SqlDataAdapter($"SELECT *, 'Delete' AS [Command] FROM {table}",connection);
-
-            var sqlBuilder = new SqlCommandBuilder(dataAdapter);
-
-            sqlBuilder.GetInsertCommand();
-            sqlBuilder.GetUpdateCommand();
-            sqlBuilder.GetDeleteCommand();
-
             var dataTable = new DataTable();
 
-            dataAdapter.Fill(dataTable);
+            ExceptionText = null;
 
-            CloseConnection();
+            try
+            {
+                OpenConnection();
+
+                dataAdapter = new SqlDataAdapter($"SELECT *, 'Delete' AS [Command] FROM {table}", connection);
+
+                var sqlBuilder = new SqlCommandBuilder(dataAdapter);
+
+                sqlBuilder.GetInsertCommand();
+                sqlBuilder.GetUpdateCommand();
+                sqlBuilder.GetDeleteCommand();
+
+                dataAdapter.Fill(dataTable);
+
+                CloseConnection();
+            }
+            catch(SqlException ex)
+            {
+                CreateLogException(ex);
+            }
 
             return dataTable;
         }
@@ -203,25 +182,31 @@ namespace TMapApp.BL.Database
         /// <param name="dataTable">Таблица БД.</param>
         public void UpdateTable(DataTable dataTable)
         {
-            dataAdapter.Update(dataTable);
+            ExceptionText = null;
+
+            try
+            {
+                dataAdapter.Update(dataTable);
+            }
+            catch(SqlException ex)
+            {
+                CreateLogException(ex);
+            }
         }
 
         /// <summary>
-        /// Получить список техники.
+        /// Создает log файл в папке Logs и записывает exception в параметр.
         /// </summary>
-        /// <returns></returns>
-        public List<string> GetMachinesList()
+        /// <param name="ex">Текст ошибки.</param>
+        private void CreateLogException(Exception ex)
         {
-            return machinesList;
-        }
-
-        /// <summary>
-        /// Получить список ID координат и ID техники.
-        /// </summary>
-        /// <returns>Список с KeyValuePair<int,int></returns>
-        public List<KeyValuePair<int,int>> GetPointIDs()
-        {
-            return pointsIDs;
+            ExceptionText = ex;
+            
+            using (var logFile = File.Create($"{logFolderPath}/{DateTime.Today.Day}.{DateTime.Today.Month}-{DateTime.Now.Hour}.{DateTime.Now.Minute}.{DateTime.Now.Second}.log"))
+            {
+                using (var fileWriter = new StreamWriter(logFile, Encoding.UTF8))
+                    fileWriter.WriteLine(ex.Message);
+            }
         }
     }
 }
